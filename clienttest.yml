@@ -1,0 +1,62 @@
+---
+#playbook test
+- hosts: clients
+  remote_user: root
+
+  tasks:
+
+    - name: Install nmap
+      yum:
+        name: nmap
+
+    - name: Install wget
+      yum:
+        name: wget
+
+    - name: start ssh
+      systemd:
+        name: sshd
+        enabled: yes
+        state: started
+
+    - name: configure firewalld for ssh
+      firewalld:
+        service: ssh
+        permanent: yes
+        state: enabled
+
+    - name: add user alice
+      user:
+        name: alice
+        group: wheel
+        generate_ssh_key: yes
+        ssh_key_file: .ssh/id_rsa
+        password: $6$1$Z925qJg/woYnwWuCPr0g4V2QfOWuVn/MnAOWQuhuOlz6srWoUCZnwsJciujcGQe9ZHA5D0drkCSF3mbDYFoeD.
+
+    - name: add user bob
+      user:
+        name: bob
+        group: wheel
+        password: $6$1$Z925qJg/woYnwWuCPr0g4V2QfOWuVn/MnAOWQuhuOlz6srWoUCZnwsJciujcGQe9ZHA5D0drkCSF3mbDYFoeD.
+
+    - name: add user charles
+      user:
+        name: charles
+        password: $6$1$Z925qJg/woYnwWuCPr0g4V2QfOWuVn/MnAOWQuhuOlz6srWoUCZnwsJciujcGQe9ZHA5D0drkCSF3mbDYFoeD.
+
+    - name: add user dave
+      user:
+        name: dave
+        password: $6$1$Z925qJg/woYnwWuCPr0g4V2QfOWuVn/MnAOWQuhuOlz6srWoUCZnwsJciujcGQe9ZHA5D0drkCSF3mbDYFoeD.
+
+    - name: add user eve
+      user:
+        name: eve
+        password: $6$1$Z925qJg/woYnwWuCPr0g4V2QfOWuVn/MnAOWQuhuOlz6srWoUCZnwsJciujcGQe9ZHA5D0drkCSF3mbDYFoeD.
+
+    - name: copy alice ssh key
+      copy:
+        remote_src: yes
+        src: /home/alice/.ssh/id_rsa
+        dest: /root/.ssh/
+        owner: alice
